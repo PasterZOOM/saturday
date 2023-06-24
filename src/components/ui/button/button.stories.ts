@@ -12,7 +12,7 @@ const meta = {
       control: { type: 'radio' },
     },
     as: {
-      options: ['button', 'a', 'p'],
+      options: ['button', 'a'],
       control: { type: 'radio' },
     },
   },
@@ -47,7 +47,7 @@ export const Tertiary: Story = {
 export const Link: Story = {
   args: {
     variant: 'link',
-    children: 'Tertiary Button',
+    children: 'Link Button',
     disabled: false,
   },
 }
@@ -66,5 +66,6 @@ export const AsLink: Story = {
     variant: 'primary',
     children: 'Link that looks like a button',
     as: 'a',
+    href: '/home',
   },
 }
