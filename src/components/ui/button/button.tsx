@@ -23,6 +23,10 @@ export const Button = <T extends ElementType = 'button'>(
   } = props
 
   return (
-    <Component className={`${s[variant]} ${fullWidth ? s.fullWidth : ''} ${className}`} {...rest} />
+    <Component
+      onMouseDown={e => e.preventDefault()}
+      className={`${s[variant]} ${fullWidth ? s.fullWidth : ''} ${className}`}
+      {...rest}
+    />
   )
 }
