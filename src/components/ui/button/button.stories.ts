@@ -11,6 +11,7 @@ const meta = {
       options: ['primary', 'secondary', 'tertiary', 'link'],
       control: { type: 'radio' },
     },
+    fullWidth: { type: 'boolean', defaultValue: false },
     as: {
       options: ['button', 'a'],
       control: { type: 'radio' },

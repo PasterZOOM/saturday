@@ -1,0 +1,55 @@
+.label {
+  color: var(--color-dark-100);
+}
+
+.input {
+  cursor: text;
+
+  padding: 0.375rem 0.75rem;
+
+  color: var(--color-light-100);
+
+  background: inherit;
+  border: 1px solid var(--color-dark-300);
+  border-radius: 2px;
+  outline: none;
+
+  &::placeholder {
+    color: var(--color-dark-100);
+    opacity: 1;
+  }
+
+  &:disabled::placeholder {
+    color: var(--color-dark-300);
+  }
+
+  &:focus {
+    border-color: var(--color-info-700);
+    outline: 1px solid var(--color-info-700);
+  }
+
+  &:has(input:disabled) {
+    pointer-events: none;
+  }
+
+  &:hover:not(:focus-within) {
+    background-color: var(--color-dark-700);
+  }
+
+  &:focus-within:not(:focus) {
+    border-color: var(--color-light-100);
+  }
+
+  & input {
+    width: 100%;
+    padding: 0;
+
+    background: none;
+    border: none;
+    outline: none;
+  }
+}
+
+.notEmpty {
+  border-color: var(--color-light-100);
+}
