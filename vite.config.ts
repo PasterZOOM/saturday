@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/src/',
   build: {
     rollupOptions: {
-      external: ['components'],
+      external: ['components/**/'],
     },
   },
 })
