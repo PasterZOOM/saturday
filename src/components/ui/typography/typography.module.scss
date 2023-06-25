@@ -1,0 +1,64 @@
+@mixin typography($fs, $lh, $fw: var(--font-weight-regular)) {
+  all: inherit;
+
+  cursor: default;
+
+  font-size: $fs;
+  font-weight: $fw;
+  line-height: $lh;
+}
+
+@mixin link {
+  color: var(--color-info-500);
+  text-decoration: underline;
+}
+
+.large {
+  @include typography(var(--font-size-xxl), var(--line-height-l), var(--font-weight-bold));
+}
+
+.h1 {
+  @include typography(var(--font-size-xl), var(--line-height-l), var(--font-weight-bold));
+}
+
+.h2 {
+  @include typography(var(--font-size-l), var(--line-height-m), var(--font-weight-bold));
+}
+
+.h3 {
+  @include typography(var(--font-size-m), var(--line-height-m), var(--font-weight-bold));
+}
+
+.body1 {
+  @include typography(var(--font-size-m), var(--line-height-m));
+}
+
+.subtitle1 {
+  @include typography(var(--font-size-m), var(--line-height-m), var(--font-weight-bold));
+}
+
+.body2 {
+  @include typography(var(--font-size-s), var(--line-height-m));
+}
+
+.subtitle2 {
+  @include typography(var(--font-size-s), var(--line-height-m), var(--font-weight-bold));
+}
+
+.caption {
+  @include typography(var(--font-size-xs), var(--line-height-s));
+}
+
+.overline {
+  @include typography(var(--font-size-xs), var(--line-height-s), var(--font-weight-bold));
+}
+
+.link1 {
+  @include typography(var(--font-size-s), var(--line-height-m));
+  @include link;
+}
+
+.link2 {
+  @include typography(var(--font-size-xs), var(--line-height-s));
+  @include link;
+}
