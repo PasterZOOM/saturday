@@ -1,11 +1,10 @@
 @mixin typography($fs, $lh, $fw: var(--font-weight-regular)) {
-  all: inherit;
-
   cursor: default;
 
   font-size: $fs;
   font-weight: $fw;
   line-height: $lh;
+  color: var(--color-light-100);
 }
 
 @mixin link {
@@ -61,4 +60,20 @@
 .link2 {
   @include typography(var(--font-size-xs), var(--line-height-s));
   @include link;
+}
+
+.primary {
+  color: var(--color-accent-500);
+}
+
+.secondary {
+  color: var(--color-dark-900);
+}
+
+.error {
+  color: var(--color-danger-300);
+}
+
+.inherit {
+  color: inherit;
 }

@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { HTMLInputTypeAttribute, useState } from 'react'
 
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { Input, PropsType } from './'
 
-const Wrapper = (props: PropsType) => {
+const Wrapper = <T extends HTMLInputTypeAttribute>(props: PropsType<T>) => {
   const [value, setValue] = useState('')
 
   return <Input value={value} onChange={e => setValue(e.currentTarget.value)} {...props} />
@@ -16,6 +16,7 @@ const meta = {
   tags: ['autodocs'],
   argTypes: {
     disabled: { control: { type: 'boolean', defaultValue: false } },
+    error: { control: { type: 'text' } },
   },
 } satisfies Meta<typeof Wrapper>
 
@@ -36,13 +37,24 @@ export const DefaultDisabled: Story = {
   },
 }
 
+export const DefaultWithError: Story = {
+  args: {
+    ...Default.args,
+    value: 'Error',
+    error: 'Error',
+  },
+}
+
 export const Password: Story = {
   args: {
-    label: 'Input',
+    ...Default.args,
+    type: 'password',
+    placeholder: 'Enter your password',
+    label: 'Password',
   },
 }
 export const Search: Story = {
   args: {
-    label: 'Input',
+    ...Default.args,
   },
 }

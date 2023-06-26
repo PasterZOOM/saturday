@@ -1,10 +1,18 @@
+@import '../typography/typography.module';
+
 .label {
+  @include typography(var(--font-size-m), var(--line-height-m));
+
+  display: block;
   color: var(--color-dark-100);
 }
 
 .input {
+  @include typography(var(--font-size-m), var(--line-height-m));
+
   cursor: text;
 
+  width: 100%;
   padding: 0.375rem 0.75rem;
 
   color: var(--color-light-100);
@@ -23,33 +31,43 @@
     color: var(--color-dark-300);
   }
 
-  &:focus {
-    border-color: var(--color-info-700);
-    outline: 1px solid var(--color-info-700);
-  }
-
-  &:has(input:disabled) {
+  &:disabled {
     pointer-events: none;
+    color: var(--color-dark-300);
+    border-color: var(--color-dark-300);
   }
 
-  &:hover:not(:focus-within) {
+  &:hover:not(:focus, :disabled) {
     background-color: var(--color-dark-700);
-  }
-
-  &:focus-within:not(:focus) {
-    border-color: var(--color-light-100);
-  }
-
-  & input {
-    width: 100%;
-    padding: 0;
-
-    background: none;
-    border: none;
-    outline: none;
   }
 }
 
 .notEmpty {
   border-color: var(--color-light-100);
+}
+
+.errorMessage {
+  @include typography(var(--font-size-xs), var(--line-height-m));
+
+  position: absolute;
+}
+
+.wrapper {
+  position: relative;
+
+  .rightIcon {
+    position: absolute;
+    top: 0;
+    right: 0.75rem;
+
+    display: flex;
+    align-items: center;
+
+    height: 100%;
+  }
+
+  .error {
+    color: var(--color-danger-300);
+    border-color: var(--color-danger-300);
+  }
 }

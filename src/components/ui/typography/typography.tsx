@@ -15,10 +15,12 @@ type TypographyVariant =
   | 'overline'
   | 'link1'
   | 'link2'
+type TopographyColor = 'primary' | 'error' | 'inherit'
 
 export type PropsType<T extends TypographyVariant, U extends ElementType> = {
   variant?: T
   as?: U
+  color?: TopographyColor
 } & (U extends ElementType
   ? ComponentPropsWithoutRef<U>
   : T extends 'h1'
@@ -27,12 +29,12 @@ export type PropsType<T extends TypographyVariant, U extends ElementType> = {
   ? ComponentPropsWithoutRef<'h2'>
   : T extends 'h3'
   ? ComponentPropsWithoutRef<'h3'>
-  : ComponentPropsWithoutRef<'p'>)
+  : ComponentPropsWithoutRef<'span'>)
 
 export const Typography = <T extends TypographyVariant, U extends ElementType = 'p'>(
   props: PropsType<T, U>
 ) => {
-  const { variant = 'body1', className = '', as, ...rest } = props
+  const { variant = 'body1', className = '', color = 'inherit', as, ...rest } = props
 
   const Component = as
     ? as
@@ -45,9 +47,9 @@ export const Typography = <T extends TypographyVariant, U extends ElementType = 
           case 'h3':
             return 'h3'
           default:
-            return 'p'
+            return 'span'
         }
       })()
 
-  return <Component className={`${s[variant]} ${className}`} {...rest} />
+  return <Component className={`${s[variant]} ${className} ${s[color]}`} {...rest} />
 }
