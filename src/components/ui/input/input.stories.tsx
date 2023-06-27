@@ -7,7 +7,7 @@ import { Input, PropsType } from './'
 const Wrapper = <T extends HTMLInputTypeAttribute>(props: PropsType<T>) => {
   const [value, setValue] = useState('')
 
-  return <Input value={value} onChange={e => setValue(e.currentTarget.value)} {...props} />
+  return <Input value={value} onChangeValue={value => setValue(value)} {...props} />
 }
 
 const meta = {
@@ -15,6 +15,10 @@ const meta = {
   component: Wrapper,
   tags: ['autodocs'],
   argTypes: {
+    type: {
+      options: ['text', 'password', 'search'],
+      control: { type: 'radio' },
+    },
     disabled: { control: { type: 'boolean', defaultValue: false } },
     error: { control: { type: 'text' } },
   },
@@ -30,7 +34,7 @@ export const Default: Story = {
     placeholder: 'Placeholder',
   },
 }
-export const DefaultDisabled: Story = {
+export const Disabled: Story = {
   args: {
     ...Default.args,
     disabled: true,
@@ -40,7 +44,6 @@ export const DefaultDisabled: Story = {
 export const DefaultWithError: Story = {
   args: {
     ...Default.args,
-    value: 'Error',
     error: 'Error',
   },
 }
@@ -56,5 +59,8 @@ export const Password: Story = {
 export const Search: Story = {
   args: {
     ...Default.args,
+    placeholder: 'Search',
+    type: 'search',
+    label: 'Search',
   },
 }

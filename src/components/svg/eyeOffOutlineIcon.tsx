@@ -1,6 +1,6 @@
 import { SVGProps, Ref, forwardRef, memo } from 'react'
 
-const EyeOffOutline = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+const EyeOffOutlineIcon = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" ref={ref} {...props}>
     <g fill="currentColor" clipPath="url(#a)">
       <path d="M4.71 3.29a1 1 0 1 0-1.42 1.42l5.63 5.63a3.5 3.5 0 0 0 4.74 4.74l5.63 5.63a1 1 0 1 0 1.42-1.42l-16-16ZM12 13.5a1.5 1.5 0 0 1-1.5-1.5v-.07l1.56 1.56-.06.01Z" />
@@ -13,7 +13,7 @@ const EyeOffOutline = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) 
     </defs>
   </svg>
 )
-const ForwardRef = forwardRef(EyeOffOutline)
+const ForwardRef = forwardRef(EyeOffOutlineIcon)
 const Memo = memo(ForwardRef)
 
-export { Memo as EyeOffOutline }
+export { Memo as EyeOffOutlineIcon }

@@ -7,7 +7,7 @@ export const App = () => {
     <div>
       <Button>hello</Button>
       <Typography>sdgsdfgdfg</Typography>
-      <Input label={'Input'} type={'password'} />
+      <Input label={'Input'} type={'password'} error={'sdfsadf'} />
     </div>
   )
 }

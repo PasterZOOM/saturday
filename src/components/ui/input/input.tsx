@@ -1,29 +1,82 @@
-import { ComponentPropsWithoutRef, HTMLInputTypeAttribute, useRef } from 'react'
+import { ChangeEventHandler, ComponentPropsWithoutRef, HTMLInputTypeAttribute, useRef } from 'react'
 
 import { v1 } from 'uuid'
 
 import s from './input.module.scss'
 
-import { PasswordIcon } from '@/components/ui/input/passwordIcon.tsx'
+import { CloseIcon } from '@/components/svg/closeIcon.tsx'
+import { EyeOffOutlineIcon } from '@/components/svg/eyeOffOutlineIcon.tsx'
+import { EyeOutlineIcon } from '@/components/svg/eyeOutlineIcon.tsx'
+import { SearchIcon } from '@/components/svg/searchIcon.tsx'
 import { useSwitcher } from '@/hooks/useSwitcher.ts'
 
 export type PropsType<T extends HTMLInputTypeAttribute> = {
   label?: string
   error?: string
   type?: T
+  onChangeValue?: (value: string) => void
 } & ComponentPropsWithoutRef<'input'>
 
 export const Input = <T extends HTMLInputTypeAttribute>(props: PropsType<T>) => {
   const { label, name, type = 'text', className = '', value, id, error, disabled, ...rest } = props
   const _id = v1()
 
+  const isTypeSearch = type === 'search'
+  const isTypePassword = type === 'password'
+
+  const thereIsLeftIcon = isTypeSearch
+  const thereIsRightIcon = isTypePassword || (isTypeSearch && value)
+
   const ref = useRef<null | HTMLInputElement>(null)
 
-  const { switcher, toggle } = useSwitcher()
+  const { switcher: isViewPassword, toggle: toggleViewPassword } = useSwitcher()
 
-  const onPasswordIconClick = () => {
-    ref.current?.focus()
-    toggle()
+  const onChangeHandler: ChangeEventHandler<HTMLInputElement> = e => {
+    props.onChange?.(e)
+    props.onChangeValue?.(e.currentTarget.value)
+  }
+
+  const LeftIcon = () => {
+    if (isTypeSearch) {
+      const onIconClick = () => {
+        ref.current?.focus()
+      }
+
+      return <SearchIcon onClick={onIconClick} />
+    }
+
+    return null
+  }
+
+  const RightIcon = () => {
+    if (isTypePassword) {
+      const onPasswordIconClick = () => {
+        ref.current?.focus()
+        toggleViewPassword()
+        const start = ref.current?.selectionStart ?? 0
+        const end = ref.current?.selectionEnd ?? 0
+
+        setTimeout(() => {
+          ref.current?.setSelectionRange(start, end)
+        }, 0)
+      }
+
+      return isViewPassword ? (
+        <EyeOutlineIcon onClick={onPasswordIconClick} />
+      ) : (
+        <EyeOffOutlineIcon onClick={onPasswordIconClick} />
+      )
+    }
+    if (isTypeSearch && value) {
+      const onClear = () => {
+        ref.current?.focus()
+        props.onChangeValue?.('')
+      }
+
+      return <CloseIcon onClick={onClear} />
+    }
+
+    return null
   }
 
   return (
@@ -33,22 +86,26 @@ export const Input = <T extends HTMLInputTypeAttribute>(props: PropsType<T>) => 
           {label}
         </label>
       )}
-      <div className={s.wrapper}>
+      <div
+        className={`${s.wrapper} ${thereIsLeftIcon ? s.isLeft : ''} ${
+          thereIsRightIcon ? s.isRight : ''
+        } ${error ? s.error : ''}`}
+      >
         <input
           ref={ref}
-          className={`${error ? s.error : ''} ${s.input} ${s[type]} ${
-            value && s.notEmpty
-          } ${className}`}
+          className={`${s.input} ${className}`}
           id={id ?? _id}
           value={value}
-          type={type}
+          type={isViewPassword && isTypePassword ? 'text' : type}
           disabled={disabled}
+          onChange={onChangeHandler}
           {...rest}
         />
+        <div className={s.leftIcon}>
+          <LeftIcon />
+        </div>
         <div className={s.rightIcon}>
-          {type === 'password' && (
-            <PasswordIcon isOpenPassword={switcher} onClick={onPasswordIconClick} />
-          )}
+          <RightIcon />
         </div>
         {error && !disabled && <div className={`${s.error} ${s.errorMessage}`}>{error}</div>}
       </div>
