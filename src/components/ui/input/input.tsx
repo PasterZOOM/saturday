@@ -5,9 +5,12 @@ import {
   forwardRef,
   HTMLInputTypeAttribute,
   RefObject,
+  useCallback,
+  useMemo,
   useRef,
 } from 'react'
 
+import classnames from 'classnames'
 import { v1 } from 'uuid'
 
 import s from './input.module.scss'
@@ -25,22 +28,12 @@ export type PropsType<T extends HTMLInputTypeAttribute> = {
   onChangeValue?: (value: string) => void
 } & ComponentPropsWithoutRef<'input'>
 
-export const Input = forwardRef<HTMLInputElement>(
+export const Input = forwardRef<HTMLInputElement, PropsType<HTMLInputTypeAttribute>>(
   <T extends HTMLInputTypeAttribute>(props: PropsType<T>, r: ForwardedRef<HTMLInputElement>) => {
-    const innerId = v1()
+    const innerId = useMemo(() => v1(), [])
     const innerRef = useRef<HTMLInputElement>()
 
-    const {
-      label,
-      name,
-      type = 'text',
-      className = '',
-      value,
-      id,
-      error,
-      disabled,
-      ...rest
-    } = props
+    const { label, name, type = 'text', className, value, id, error, disabled, ...rest } = props
 
     const ref = (r as RefObject<HTMLInputElement>) ?? innerRef
     const _id = id ?? innerId
@@ -53,10 +46,13 @@ export const Input = forwardRef<HTMLInputElement>(
 
     const { switcher: isViewPassword, toggle: toggleViewPassword } = useSwitcher()
 
-    const onChangeHandler: ChangeEventHandler<HTMLInputElement> = e => {
-      props.onChange?.(e)
-      props.onChangeValue?.(e.currentTarget.value)
-    }
+    const onChangeHandler = useCallback<ChangeEventHandler<HTMLInputElement>>(
+      e => {
+        props.onChange?.(e)
+        props.onChangeValue?.(e.currentTarget.value)
+      },
+      [props.onChange, props.onChangeValue]
+    )
 
     const LeftIcon = () => {
       if (isTypeSearch) {
@@ -78,9 +74,9 @@ export const Input = forwardRef<HTMLInputElement>(
           const start = ref.current?.selectionStart ?? 0
           const end = ref.current?.selectionEnd ?? 0
 
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             ref.current?.setSelectionRange(start, end)
-          }, 0)
+          })
         }
 
         return isViewPassword ? (
@@ -110,13 +106,15 @@ export const Input = forwardRef<HTMLInputElement>(
           </label>
         )}
         <div
-          className={`${s.wrapper} ${thereIsLeftIcon ? s.isLeft : ''} ${
-            thereIsRightIcon ? s.isRight : ''
-          } ${error ? s.error : ''}`}
+          className={classnames(s.wrapper, {
+            [s.isLeft]: thereIsLeftIcon,
+            [s.isRight]: thereIsRightIcon,
+            [s.error]: error,
+          })}
         >
           <input
             ref={ref}
-            className={`${s.input} ${className}`}
+            className={classnames(s.input, className)}
             id={_id}
             value={value}
             type={isViewPassword && isTypePassword ? 'text' : type}
@@ -130,7 +128,7 @@ export const Input = forwardRef<HTMLInputElement>(
           <div className={s.rightIcon}>
             <RightIcon />
           </div>
-          {error && !disabled && <div className={`${s.error} ${s.errorMessage}`}>{error}</div>}
+          {error && !disabled && <div className={classnames(s.error, s.errorMessage)}>{error}</div>}
         </div>
       </>
     )

@@ -19,6 +19,7 @@
   .rightIcon {
     cursor: pointer;
   }
+
   .leftIcon {
     cursor: text;
   }
@@ -114,6 +115,7 @@
 .error,
 .error:focus-within {
   color: var(--color-danger-300);
+
   &:not(:focus-within) {
     .rightIcon,
     .leftIcon {
@@ -125,15 +127,17 @@
       color: var(--color-danger-300);
     }
   }
+
   .input {
     border-color: var(--color-danger-300);
+
+    &::placeholder {
+      color: var(--color-danger-700);
+    }
 
     &:not(:placeholder-shown) {
       color: var(--color-danger-300);
       border-color: var(--color-danger-300);
-    }
-    &::placeholder {
-      color: var(--color-danger-700);
     }
   }
 
