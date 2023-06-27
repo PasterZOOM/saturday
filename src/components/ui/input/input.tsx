@@ -1,4 +1,12 @@
-import { ChangeEventHandler, ComponentPropsWithoutRef, HTMLInputTypeAttribute, useRef } from 'react'
+import {
+  ChangeEventHandler,
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+  HTMLInputTypeAttribute,
+  RefObject,
+  useRef,
+} from 'react'
 
 import { v1 } from 'uuid'
 
@@ -17,98 +25,114 @@ export type PropsType<T extends HTMLInputTypeAttribute> = {
   onChangeValue?: (value: string) => void
 } & ComponentPropsWithoutRef<'input'>
 
-export const Input = <T extends HTMLInputTypeAttribute>(props: PropsType<T>) => {
-  const { label, name, type = 'text', className = '', value, id, error, disabled, ...rest } = props
-  const _id = v1()
+export const Input = forwardRef<HTMLInputElement>(
+  <T extends HTMLInputTypeAttribute>(props: PropsType<T>, r: ForwardedRef<HTMLInputElement>) => {
+    const innerId = v1()
+    const innerRef = useRef<HTMLInputElement>()
 
-  const isTypeSearch = type === 'search'
-  const isTypePassword = type === 'password'
+    const {
+      label,
+      name,
+      type = 'text',
+      className = '',
+      value,
+      id,
+      error,
+      disabled,
+      ...rest
+    } = props
 
-  const thereIsLeftIcon = isTypeSearch
-  const thereIsRightIcon = isTypePassword || (isTypeSearch && value)
+    const ref = (r as RefObject<HTMLInputElement>) ?? innerRef
+    const _id = id ?? innerId
 
-  const ref = useRef<null | HTMLInputElement>(null)
+    const isTypeSearch = type === 'search'
+    const isTypePassword = type === 'password'
 
-  const { switcher: isViewPassword, toggle: toggleViewPassword } = useSwitcher()
+    const thereIsLeftIcon = isTypeSearch
+    const thereIsRightIcon = isTypePassword || (isTypeSearch && value)
 
-  const onChangeHandler: ChangeEventHandler<HTMLInputElement> = e => {
-    props.onChange?.(e)
-    props.onChangeValue?.(e.currentTarget.value)
-  }
+    const { switcher: isViewPassword, toggle: toggleViewPassword } = useSwitcher()
 
-  const LeftIcon = () => {
-    if (isTypeSearch) {
-      const onIconClick = () => {
-        ref.current?.focus()
-      }
-
-      return <SearchIcon onClick={onIconClick} />
+    const onChangeHandler: ChangeEventHandler<HTMLInputElement> = e => {
+      props.onChange?.(e)
+      props.onChangeValue?.(e.currentTarget.value)
     }
 
-    return null
-  }
+    const LeftIcon = () => {
+      if (isTypeSearch) {
+        const onIconClick = () => {
+          ref.current?.focus()
+        }
 
-  const RightIcon = () => {
-    if (isTypePassword) {
-      const onPasswordIconClick = () => {
-        ref.current?.focus()
-        toggleViewPassword()
-        const start = ref.current?.selectionStart ?? 0
-        const end = ref.current?.selectionEnd ?? 0
-
-        setTimeout(() => {
-          ref.current?.setSelectionRange(start, end)
-        }, 0)
+        return <SearchIcon onClick={onIconClick} />
       }
 
-      return isViewPassword ? (
-        <EyeOutlineIcon onClick={onPasswordIconClick} />
-      ) : (
-        <EyeOffOutlineIcon onClick={onPasswordIconClick} />
-      )
+      return null
     }
-    if (isTypeSearch && value) {
-      const onClear = () => {
-        ref.current?.focus()
-        props.onChangeValue?.('')
+
+    const RightIcon = () => {
+      if (isTypePassword) {
+        const onPasswordIconClick = () => {
+          ref.current?.focus()
+          toggleViewPassword()
+          const start = ref.current?.selectionStart ?? 0
+          const end = ref.current?.selectionEnd ?? 0
+
+          setTimeout(() => {
+            ref.current?.setSelectionRange(start, end)
+          }, 0)
+        }
+
+        return isViewPassword ? (
+          <EyeOutlineIcon onClick={onPasswordIconClick} />
+        ) : (
+          <EyeOffOutlineIcon onClick={onPasswordIconClick} />
+        )
       }
 
-      return <CloseIcon onClick={onClear} />
+      if (isTypeSearch && value) {
+        const onClear = () => {
+          ref.current?.focus()
+          props.onChangeValue?.('')
+        }
+
+        return <CloseIcon onClick={onClear} />
+      }
+
+      return null
     }
 
-    return null
-  }
-
-  return (
-    <>
-      {label && (
-        <label htmlFor={id ?? _id} className={s.label}>
-          {label}
-        </label>
-      )}
-      <div
-        className={`${s.wrapper} ${thereIsLeftIcon ? s.isLeft : ''} ${
-          thereIsRightIcon ? s.isRight : ''
-        } ${error ? s.error : ''}`}
-      >
-        <input
-          ref={ref}
-          className={`${s.input} ${className}`}
-          id={id ?? _id}
-          value={value}
-          type={isViewPassword && isTypePassword ? 'text' : type}
-          disabled={disabled}
-          onChange={onChangeHandler}
-          {...rest}
-        />
-        <div className={s.leftIcon}>
-          <LeftIcon />
+    return (
+      <>
+        {label && (
+          <label htmlFor={_id} className={s.label}>
+            {label}
+          </label>
+        )}
+        <div
+          className={`${s.wrapper} ${thereIsLeftIcon ? s.isLeft : ''} ${
+            thereIsRightIcon ? s.isRight : ''
+          } ${error ? s.error : ''}`}
+        >
+          <input
+            ref={ref}
+            className={`${s.input} ${className}`}
+            id={_id}
+            value={value}
+            type={isViewPassword && isTypePassword ? 'text' : type}
+            disabled={disabled}
+            onChange={onChangeHandler}
+            {...rest}
+          />
+          <div className={s.leftIcon}>
+            <LeftIcon />
+          </div>
+          <div className={s.rightIcon}>
+            <RightIcon />
+          </div>
+          {error && !disabled && <div className={`${s.error} ${s.errorMessage}`}>{error}</div>}
         </div>
-        <div className={s.rightIcon}>
-          <RightIcon />
-        </div>
-        {error && !disabled && <div className={`${s.error} ${s.errorMessage}`}>{error}</div>}
-      </div>
-    </>
-  )
-}
+      </>
+    )
+  }
+)

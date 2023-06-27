@@ -7,7 +7,7 @@ import { Input, PropsType } from './'
 const Wrapper = <T extends HTMLInputTypeAttribute>(props: PropsType<T>) => {
   const [value, setValue] = useState('')
 
-  return <Input value={value} onChangeValue={value => setValue(value)} {...props} />
+  return <Input value={value} onChangeValue={(value: string) => setValue(value)} {...props} />
 }
 
 const meta = {
