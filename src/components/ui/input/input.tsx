@@ -128,7 +128,7 @@ export const Input = forwardRef<HTMLInputElement, PropsType<HTMLInputTypeAttribu
           <div className={s.rightIcon}>
             <RightIcon />
           </div>
-          {error && !disabled && <div className={classnames(s.error, s.errorMessage)}>{error}</div>}
+          {error && <div className={classnames(s.error, s.errorMessage)}>{error}</div>}
         </div>
       </>
     )

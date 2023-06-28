@@ -88,6 +88,18 @@
       pointer-events: none;
       color: var(--color-dark-300);
       border-color: var(--color-dark-300);
+
+      ~ .leftIcon,
+      ~ .rightIcon {
+        color: var(--color-dark-300);
+      }
+    }
+
+    &:disabled:not(:placeholder-shown) {
+      ~ .leftIcon,
+      ~ .rightIcon {
+        color: var(--color-dark-300);
+      }
     }
 
     &:focus {
@@ -138,6 +150,28 @@
     &:not(:placeholder-shown) {
       color: var(--color-danger-300);
       border-color: var(--color-danger-300);
+    }
+
+    &:disabled {
+      pointer-events: none;
+      color: var(--color-danger-900);
+      border-color: var(--color-danger-900);
+
+      ~ .leftIcon,
+      ~ .rightIcon,
+      ~ .errorMessage {
+        color: var(--color-danger-900);
+      }
+    }
+    &:disabled::placeholder {
+      color: var(--color-danger-900);
+    }
+    &:disabled:not(:placeholder-shown) {
+      ~ .leftIcon,
+      ~ .rightIcon,
+      ~ .errorMessage {
+        color: var(--color-danger-900);
+      }
     }
   }
 
