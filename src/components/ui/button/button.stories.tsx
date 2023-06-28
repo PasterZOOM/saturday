@@ -73,24 +73,18 @@ export const AsLink: Story = {
   },
 }
 export const LogOut: Story = {
-  args: {
-    variant: 'primary',
-    children: (
-      <>
-        <LogoutIcon />
-        <div>Log Out</div>
-      </>
-    ),
-  },
+  render: () => (
+    <Button variant={'primary'}>
+      <LogoutIcon />
+      <div>Log Out</div>
+    </Button>
+  ),
 }
 export const LogOutSecondary: Story = {
-  args: {
-    variant: 'secondary',
-    children: (
-      <>
-        <LogoutIcon />
-        <div>Log Out</div>
-      </>
-    ),
-  },
+  render: () => (
+    <Button variant={'secondary'}>
+      <LogoutIcon />
+      <div>Log Out</div>
+    </Button>
+  ),
 }

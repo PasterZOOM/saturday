@@ -12,7 +12,7 @@ const Wrapper = <T extends HTMLInputTypeAttribute>(props: PropsType<T>) => {
 
 const meta = {
   title: 'Components/Input',
-  component: Wrapper,
+  component: Input,
   tags: ['autodocs'],
   argTypes: {
     type: {
