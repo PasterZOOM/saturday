@@ -7,6 +7,60 @@
   color: var(--color-dark-100);
 }
 
+.leftIcon {
+  cursor: text;
+
+  position: absolute;
+  top: 0;
+  left: 0.75rem;
+
+  display: flex;
+  align-items: center;
+
+  height: 100%;
+}
+
+.rightIcon {
+  cursor: pointer;
+
+  position: absolute;
+  top: 0;
+  right: 0.75rem;
+
+  display: flex;
+  align-items: center;
+
+  height: 100%;
+}
+
+.input {
+  @include typography(var(--font-size-m), var(--line-height-m));
+
+  cursor: text;
+
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+
+  color: var(--color-light-100);
+
+  background: inherit;
+  border: 1px solid var(--color-dark-300);
+  border-radius: 2px;
+  outline: none;
+}
+
+.isLeft {
+  .input {
+    padding-left: 2.5625rem;
+  }
+}
+
+.isRight {
+  .input {
+    padding-right: 2.5625rem;
+  }
+}
+
 .wrapper {
   position: relative;
   color: var(--color-dark-100);
@@ -16,72 +70,25 @@
     color: var(--color-light-100);
   }
 
-  .rightIcon {
-    cursor: pointer;
-  }
-
-  .leftIcon {
-    cursor: text;
-  }
-
   &:not(:focus-within) {
     .rightIcon,
     .leftIcon {
       color: var(--color-dark-100);
     }
-
-    .input:not(:placeholder-shown) ~ .rightIcon,
-    .input:not(:placeholder-shown) ~ .leftIcon {
-      color: var(--color-light-100);
-    }
-  }
-
-  .leftIcon,
-  .rightIcon {
-    position: absolute;
-    top: 0;
-
-    display: flex;
-    align-items: center;
-
-    height: 100%;
-  }
-
-  .leftIcon {
-    left: 0.75rem;
-  }
-
-  .rightIcon {
-    right: 0.75rem;
   }
 
   .input {
-    @include typography(var(--font-size-m), var(--line-height-m));
-
-    cursor: text;
-
-    width: 100%;
-    padding: 0.375rem 0.75rem;
-
-    color: var(--color-light-100);
-
-    background: inherit;
-    border: 1px solid var(--color-dark-300);
-    border-radius: 2px;
-    outline: none;
-
     &::placeholder {
       color: var(--color-dark-100);
       opacity: 1;
     }
 
-    &:not(:placeholder-shown) {
-      color: var(--color-light-100);
-      border-color: var(--color-light-100);
-    }
-
     &:disabled::placeholder {
       color: var(--color-dark-300);
+    }
+
+    &:focus {
+      border-color: var(--color-light-100);
     }
 
     &:disabled {
@@ -102,25 +109,9 @@
       }
     }
 
-    &:focus {
-      border-color: var(--color-light-100);
-    }
-
     &:hover:not(:focus, :disabled) {
       background-color: var(--color-dark-700);
     }
-  }
-}
-
-.isLeft {
-  .input {
-    padding-left: 2.5625rem;
-  }
-}
-
-.isRight {
-  .input {
-    padding-right: 2.5625rem;
   }
 }
 
@@ -140,7 +131,7 @@
     }
   }
 
-  .input {
+  .input.error {
     border-color: var(--color-danger-300);
 
     &::placeholder {
@@ -149,7 +140,6 @@
 
     &:not(:placeholder-shown) {
       color: var(--color-danger-300);
-      border-color: var(--color-danger-300);
     }
 
     &:disabled {
@@ -163,9 +153,11 @@
         color: var(--color-danger-900);
       }
     }
+
     &:disabled::placeholder {
       color: var(--color-danger-900);
     }
+
     &:disabled:not(:placeholder-shown) {
       ~ .leftIcon,
       ~ .rightIcon,

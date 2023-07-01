@@ -1,9 +1,9 @@
 import {
   ChangeEventHandler,
   ComponentPropsWithoutRef,
-  ForwardedRef,
+  FC,
   forwardRef,
-  HTMLInputTypeAttribute,
+  memo,
   RefObject,
   useCallback,
   useMemo,
@@ -15,25 +15,41 @@ import { v1 } from 'uuid'
 
 import s from './input.module.scss'
 
-import { CloseIcon } from '@/components/svg/closeIcon.tsx'
-import { EyeOffOutlineIcon } from '@/components/svg/eyeOffOutlineIcon.tsx'
-import { EyeOutlineIcon } from '@/components/svg/eyeOutlineIcon.tsx'
-import { SearchIcon } from '@/components/svg/searchIcon.tsx'
+import { CloseIcon } from '@/components/ui/input/icons/closeIcon.tsx'
+import { EyeOffOutlineIcon } from '@/components/ui/input/icons/eyeOffOutlineIcon.tsx'
+import { EyeOutlineIcon } from '@/components/ui/input/icons/eyeOutlineIcon.tsx'
+import { SearchIcon } from '@/components/ui/input/icons/searchIcon.tsx'
 import { useSwitcher } from '@/hooks/useSwitcher.ts'
 
-export type PropsType<T extends HTMLInputTypeAttribute> = {
+export type InputType = 'text' | 'password' | 'search'
+
+export type PropsType<T extends InputType> = {
   label?: string
   error?: string
   type?: T
-  onChangeValue?: (value: string) => void
-} & ComponentPropsWithoutRef<'input'>
+  onChange?: (value: string) => void
+}
 
-export const Input = forwardRef<HTMLInputElement, PropsType<HTMLInputTypeAttribute>>(
-  <T extends HTMLInputTypeAttribute>(props: PropsType<T>, r: ForwardedRef<HTMLInputElement>) => {
+export const Input = memo(
+  forwardRef<
+    HTMLInputElement,
+    PropsType<InputType> & Omit<ComponentPropsWithoutRef<'input'>, keyof PropsType<InputType>>
+  >((props, r) => {
+    const {
+      label,
+      name,
+      type = 'text',
+      className,
+      value,
+      id,
+      error,
+      disabled,
+      onChange,
+      ...rest
+    } = props
+
+    const innerRef = useRef<HTMLInputElement>(null)
     const innerId = useMemo(() => v1(), [])
-    const innerRef = useRef<HTMLInputElement>()
-
-    const { label, name, type = 'text', className, value, id, error, disabled, ...rest } = props
 
     const ref = (r as RefObject<HTMLInputElement>) ?? innerRef
     const _id = id ?? innerId
@@ -41,62 +57,31 @@ export const Input = forwardRef<HTMLInputElement, PropsType<HTMLInputTypeAttribu
     const isTypeSearch = type === 'search'
     const isTypePassword = type === 'password'
 
-    const thereIsLeftIcon = isTypeSearch
-    const thereIsRightIcon = isTypePassword || (isTypeSearch && value)
-
     const { switcher: isViewPassword, toggle: toggleViewPassword } = useSwitcher()
 
-    const onChangeHandler = useCallback<ChangeEventHandler<HTMLInputElement>>(
-      e => {
-        props.onChange?.(e)
-        props.onChangeValue?.(e.currentTarget.value)
-      },
-      [props.onChange, props.onChangeValue]
-    )
+    const onPasswordIconClick = () => {
+      ref.current?.focus()
+      toggleViewPassword()
+      const start = ref?.current?.selectionStart ?? 0
+      const end = ref.current?.selectionEnd ?? 0
 
-    const LeftIcon = () => {
-      if (isTypeSearch) {
-        const onIconClick = () => {
-          ref.current?.focus()
-        }
-
-        return <SearchIcon onClick={onIconClick} />
-      }
-
-      return null
+      requestAnimationFrame(() => {
+        ref.current?.setSelectionRange(start, end)
+      })
     }
 
-    const RightIcon = () => {
-      if (isTypePassword) {
-        const onPasswordIconClick = () => {
-          ref.current?.focus()
-          toggleViewPassword()
-          const start = ref.current?.selectionStart ?? 0
-          const end = ref.current?.selectionEnd ?? 0
-
-          requestAnimationFrame(() => {
-            ref.current?.setSelectionRange(start, end)
-          })
-        }
-
-        return isViewPassword ? (
-          <EyeOutlineIcon onClick={onPasswordIconClick} />
-        ) : (
-          <EyeOffOutlineIcon onClick={onPasswordIconClick} />
-        )
-      }
-
-      if (isTypeSearch && value) {
-        const onClear = () => {
-          ref.current?.focus()
-          props.onChangeValue?.('')
-        }
-
-        return <CloseIcon onClick={onClear} />
-      }
-
-      return null
+    const onChangeHandler: ChangeEventHandler<HTMLInputElement> = e => {
+      onChange?.(e.currentTarget.value)
     }
+
+    const onSearchIconClick = useCallback(() => {
+      ref.current?.focus()
+    }, [])
+
+    const onClear = useCallback(() => {
+      ref.current?.focus()
+      onChange?.('')
+    }, [])
 
     return (
       <>
@@ -107,14 +92,14 @@ export const Input = forwardRef<HTMLInputElement, PropsType<HTMLInputTypeAttribu
         )}
         <div
           className={classnames(s.wrapper, {
-            [s.isLeft]: thereIsLeftIcon,
-            [s.isRight]: thereIsRightIcon,
+            [s.isLeft]: isTypeSearch,
+            [s.isRight]: isTypePassword || (isTypeSearch && value),
             [s.error]: error,
           })}
         >
           <input
             ref={ref}
-            className={classnames(s.input, className)}
+            className={classnames(s.input, { [s.error]: error }, className)}
             id={_id}
             value={value}
             type={isViewPassword && isTypePassword ? 'text' : type}
@@ -123,14 +108,58 @@ export const Input = forwardRef<HTMLInputElement, PropsType<HTMLInputTypeAttribu
             {...rest}
           />
           <div className={s.leftIcon}>
-            <LeftIcon />
+            <LeftIcon isTypeSearch={isTypeSearch} onSearchIconClick={onSearchIconClick} />
           </div>
           <div className={s.rightIcon}>
-            <RightIcon />
+            <RightIcon
+              isViewPassword={isViewPassword}
+              isTypePassword={isTypePassword}
+              value={value}
+              onClear={onClear}
+              onPasswordIconClick={onPasswordIconClick}
+              isTypeSearch={isTypeSearch}
+            />
           </div>
           {error && <div className={classnames(s.error, s.errorMessage)}>{error}</div>}
         </div>
       </>
     )
+  })
+)
+
+type LeftIconPropsType = { isTypeSearch: boolean; onSearchIconClick: () => void }
+
+const LeftIcon: FC<LeftIconPropsType> = memo(({ isTypeSearch, onSearchIconClick }) => {
+  if (isTypeSearch) {
+    return <SearchIcon onClick={onSearchIconClick} />
+  }
+
+  return null
+})
+
+type RightIconPropsType = {
+  isViewPassword: boolean
+  isTypeSearch: boolean
+  isTypePassword: boolean
+  value: string | number | readonly string[] | undefined
+  onClear: () => void
+  onPasswordIconClick: () => void
+}
+
+const RightIcon: FC<RightIconPropsType> = memo(
+  ({ isViewPassword, isTypePassword, isTypeSearch, value, onClear, onPasswordIconClick }) => {
+    if (isTypePassword) {
+      return isViewPassword ? (
+        <EyeOutlineIcon onClick={onPasswordIconClick} />
+      ) : (
+        <EyeOffOutlineIcon onClick={onPasswordIconClick} />
+      )
+    }
+
+    if (isTypeSearch && value) {
+      return <CloseIcon onClick={onClear} />
+    }
+
+    return null
   }
 )

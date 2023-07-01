@@ -4,8 +4,8 @@
   font-size: $fs;
   font-weight: $fw;
   line-height: $lh;
-  white-space: pre-line;
   color: var(--color-light-100);
+  white-space: pre-line;
 }
 
 @mixin link {

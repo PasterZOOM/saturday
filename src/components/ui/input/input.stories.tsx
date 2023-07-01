@@ -1,14 +1,8 @@
-import { HTMLInputTypeAttribute, useState } from 'react'
+import { useState } from 'react'
 
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Input, PropsType } from './'
-
-const Wrapper = <T extends HTMLInputTypeAttribute>(props: PropsType<T>) => {
-  const [value, setValue] = useState('')
-
-  return <Input value={value} onChangeValue={(value: string) => setValue(value)} {...props} />
-}
+import { Input } from './'
 
 const meta = {
   title: 'Components/Input',
@@ -19,10 +13,10 @@ const meta = {
       options: ['text', 'password', 'search'],
       control: { type: 'radio' },
     },
-    disabled: { control: { type: 'boolean', defaultValue: false } },
+    disabled: { control: { type: 'boolean' } },
     error: { control: { type: 'text' } },
   },
-} satisfies Meta<typeof Wrapper>
+} satisfies Meta<typeof Input>
 
 export default meta
 
@@ -57,6 +51,11 @@ export const Password: Story = {
   },
 }
 export const Search: Story = {
+  render: props => {
+    const [value, setValue] = useState('')
+
+    return <Input {...props} value={value} onChange={setValue} disabled={false} />
+  },
   args: {
     ...Default.args,
     placeholder: 'Search',

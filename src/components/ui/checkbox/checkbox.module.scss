@@ -1,0 +1,73 @@
+@import '../typography/typography.module';
+
+.main {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.5rem;
+
+  .checkbox {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: fit-content;
+    height: fit-content;
+
+    .input {
+      cursor: pointer;
+
+      position: absolute;
+      top: 0;
+
+      width: 100%;
+      height: 100%;
+      margin: 0;
+
+      opacity: 0;
+    }
+
+    &:has(.input:hover) {
+      background: var(--color-dark-500);
+      border-radius: 9999px;
+      outline: 5px solid var(--color-dark-500);
+    }
+
+    &:has(.input:active),
+    &:has(.input:focus-visible) {
+      background: var(--color-dark-100);
+      border-radius: 9999px;
+      outline: 5px solid var(--color-dark-100);
+    }
+
+    .icon {
+      all: inherit;
+
+      .check {
+        color: var(--color-dark-900);
+      }
+
+      &:has(~ .input:disabled) {
+        color: var(--color-dark-100);
+
+        .check {
+          color: var(--color-light-100);
+        }
+      }
+    }
+  }
+
+  .label {
+    @include typography(var(--font-size-m), var(--line-height-m));
+
+    cursor: pointer;
+    display: block;
+    color: var(--color-light-100);
+  }
+
+  &:has(.input:disabled) {
+    pointer-events: none;
+  }
+}
