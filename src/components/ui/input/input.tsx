@@ -25,9 +25,9 @@ export type InputType = 'text' | 'password' | 'search'
 
 export type PropsType<T extends InputType> = {
   label?: string
-  error?: string
+  errorMessage?: string
   type?: T
-  onChange?: (value: string) => void
+  onClear?: () => void
 }
 
 export const Input = memo(
@@ -42,9 +42,10 @@ export const Input = memo(
       className,
       value,
       id,
-      error,
+      errorMessage,
       disabled,
       onChange,
+      onClear,
       ...rest
     } = props
 
@@ -71,16 +72,16 @@ export const Input = memo(
     }
 
     const onChangeHandler: ChangeEventHandler<HTMLInputElement> = e => {
-      onChange?.(e.currentTarget.value)
+      onChange?.(e)
     }
 
     const onSearchIconClick = useCallback(() => {
       ref.current?.focus()
     }, [])
 
-    const onClear = useCallback(() => {
+    const onClearHandler = useCallback(() => {
       ref.current?.focus()
-      onChange?.('')
+      onClear?.()
     }, [])
 
     return (
@@ -94,12 +95,12 @@ export const Input = memo(
           className={classnames(s.wrapper, {
             [s.isLeft]: isTypeSearch,
             [s.isRight]: isTypePassword || (isTypeSearch && value),
-            [s.error]: error,
+            [s.error]: errorMessage,
           })}
         >
           <input
             ref={ref}
-            className={classnames(s.input, { [s.error]: error }, className)}
+            className={classnames(s.input, { [s.error]: errorMessage }, className)}
             id={_id}
             value={value}
             type={isViewPassword && isTypePassword ? 'text' : type}
@@ -115,12 +116,14 @@ export const Input = memo(
               isViewPassword={isViewPassword}
               isTypePassword={isTypePassword}
               value={value}
-              onClear={onClear}
+              onClear={onClearHandler}
               onPasswordIconClick={onPasswordIconClick}
               isTypeSearch={isTypeSearch}
             />
           </div>
-          {error && <div className={classnames(s.error, s.errorMessage)}>{error}</div>}
+          {errorMessage && (
+            <div className={classnames(s.error, s.errorMessage)}>{errorMessage}</div>
+          )}
         </div>
       </>
     )

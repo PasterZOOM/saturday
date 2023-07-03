@@ -14,7 +14,7 @@ const meta = {
       control: { type: 'radio' },
     },
     disabled: { control: { type: 'boolean' } },
-    error: { control: { type: 'text' } },
+    errorMessage: { control: { type: 'text' } },
   },
 } satisfies Meta<typeof Input>
 

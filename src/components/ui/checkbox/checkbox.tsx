@@ -10,12 +10,12 @@ import { UncheckedIcon } from '@/components/ui/checkbox/icons/uncheckedIcon.tsx'
 
 export type PropsType = {
   checked: boolean
-  onChange: (checked: boolean) => void
   label?: string
-} & Omit<ComponentPropsWithoutRef<'input'>, 'type' | 'onChange'>
+  errorMessage?: string
+} & Omit<ComponentPropsWithoutRef<'input'>, 'type'>
 
 export const Checkbox = forwardRef<HTMLInputElement, PropsType>((props, r) => {
-  const { label, className, onChange, checked, id, ...rest } = props
+  const { label, className, onChange, checked, id, errorMessage, ...rest } = props
 
   const innerRef = useRef<HTMLInputElement>(null)
   const innerId = useMemo(() => v1(), [])
@@ -24,7 +24,7 @@ export const Checkbox = forwardRef<HTMLInputElement, PropsType>((props, r) => {
   const _id = id ?? innerId
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = e => {
-    onChange?.(e.currentTarget.checked)
+    onChange?.(e)
   }
 
   return (
@@ -46,6 +46,7 @@ export const Checkbox = forwardRef<HTMLInputElement, PropsType>((props, r) => {
           {label}
         </label>
       )}
+      {errorMessage && <div className={classnames(s.error, s.errorMessage)}>{errorMessage}</div>}
     </div>
   )
 })
